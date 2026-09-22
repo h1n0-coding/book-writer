@@ -8,6 +8,7 @@ import {
   type Node,
   type Edge,
   type OnConnect,
+  type OnNodeDrag,
   type NodeChange,
   type NodeMouseHandler,
   type EdgeMouseHandler,
@@ -59,10 +60,7 @@ export function MindmapPanel() {
   const [rfEdges, setRfEdges] = useState<Edge[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  async function autoLayoutIfNeeded(
-    bookId: string,
-    allEvents: StoryEvent[],
-  ): Promise<boolean> {
+  async function autoLayoutIfNeeded(allEvents: StoryEvent[]): Promise<boolean> {
     const unset = allEvents.filter((e) => !e.positionSet);
     if (unset.length === 0) return false;
     for (let i = 0; i < unset.length; i++) {
@@ -81,7 +79,7 @@ export function MindmapPanel() {
     }
     try {
       let eventList = await listEventsByBook(activeBookId);
-      const relaidOut = await autoLayoutIfNeeded(activeBookId, eventList);
+      const relaidOut = await autoLayoutIfNeeded(eventList);
       if (relaidOut) {
         eventList = await listEventsByBook(activeBookId);
       }
@@ -138,7 +136,7 @@ export function MindmapPanel() {
     setRfNodes((nds) => applyNodeChanges(changes, nds));
   }, []);
 
-  const onNodeDragStop: NodeMouseHandler = useCallback((_evt, node) => {
+  const onNodeDragStop: OnNodeDrag = useCallback((_evt, node) => {
     updateEventPosition(node.id, node.position.x, node.position.y).catch(
       (err) => setError(String(err)),
     );
@@ -387,7 +385,7 @@ function EventDetailPanel({
       <div className="flex items-center gap-2">
         <select
           value={fields.status}
-          onChange={(e) => update("status", e.target.value)}
+          onChange={(e) => update("status", e.target.value as ChapterStatus)}
           className="rounded bg-zinc-800 px-2 py-1 text-xs text-zinc-200 outline-none"
         >
           <option value="draft">{statusOptionLabel.draft}</option>
