@@ -4,6 +4,7 @@ import {
   listEventsByBook,
   updateEvent,
   deleteEvent,
+  moveEvent,
   linkEventToScene,
   unlinkEventFromScene,
   listScenesForEvent,
@@ -107,6 +108,16 @@ export function TimelinePanel() {
     }
   }
 
+  async function handleMove(eventId: string, direction: "up" | "down") {
+    if (!activeBookId) return;
+    try {
+      await moveEvent(activeBookId, eventId, direction);
+      await refresh();
+    } catch (err) {
+      setError(String(err));
+    }
+  }
+
   const selected = events.find((e) => e.id === selectedId) ?? null;
 
   if (!activeBookId) {
@@ -133,24 +144,42 @@ export function TimelinePanel() {
           </p>
         )}
         <ul className="relative flex flex-col gap-1 border-l border-zinc-800 pl-4">
-          {events.map((e) => (
+          {events.map((e, index) => (
             <li key={e.id} className="relative">
               <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-zinc-600" />
-              <button
-                onClick={() => setSelectedEvent(e.id)}
-                className={`w-full truncate rounded px-2 py-1 text-left text-sm ${
-                  selectedId === e.id
-                    ? "bg-zinc-800 text-zinc-100"
-                    : "text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200"
-                }`}
-              >
-                <span className="block truncate">{e.title}</span>
-                {e.dateValue && (
-                  <span className="block text-xs text-zinc-600">
-                    {e.dateValue}
-                  </span>
-                )}
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setSelectedEvent(e.id)}
+                  className={`flex-1 truncate rounded px-2 py-1 text-left text-sm ${
+                    selectedId === e.id
+                      ? "bg-zinc-800 text-zinc-100"
+                      : "text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200"
+                  }`}
+                >
+                  <span className="block truncate">{e.title}</span>
+                  {e.dateValue && (
+                    <span className="block text-xs text-zinc-600">
+                      {e.dateValue}
+                    </span>
+                  )}
+                </button>
+                <div className="flex flex-col">
+                  <button
+                    disabled={index === 0}
+                    onClick={() => handleMove(e.id, "up")}
+                    className="text-[10px] text-zinc-600 hover:text-zinc-200 disabled:opacity-20"
+                  >
+                    ▲
+                  </button>
+                  <button
+                    disabled={index === events.length - 1}
+                    onClick={() => handleMove(e.id, "down")}
+                    className="text-[10px] text-zinc-600 hover:text-zinc-200 disabled:opacity-20"
+                  >
+                    ▼
+                  </button>
+                </div>
+              </div>
             </li>
           ))}
           {events.length === 0 && (

@@ -355,3 +355,30 @@ export async function listLocationsForEvent(
   );
   return rows.map(mapLocationRow);
 }
+
+export async function moveEvent(
+  bookId: string,
+  eventId: string,
+  direction: "up" | "down",
+): Promise<void> {
+  const db = await getDb();
+  const events = await listEventsByBook(bookId);
+  const index = events.findIndex((e) => e.id === eventId);
+  if (index === -1) return;
+
+  const swapIndex = direction === "up" ? index - 1 : index + 1;
+  if (swapIndex < 0 || swapIndex >= events.length) return;
+
+  const current = events[index];
+  const swapWith = events[swapIndex];
+  const now = new Date().toISOString();
+
+  await db.execute(
+    "UPDATE events SET sort_order = $1, updated_at = $2 WHERE id = $3",
+    [swapWith.sortOrder, now, current.id],
+  );
+  await db.execute(
+    "UPDATE events SET sort_order = $1, updated_at = $2 WHERE id = $3",
+    [current.sortOrder, now, swapWith.id],
+  );
+}

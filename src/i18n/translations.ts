@@ -33,6 +33,13 @@ export const translations = {
     defaultChapterTitle: "Новая глава",
     defaultSceneTitle: "Новая сцена",
 
+    renameTooltip: "Переименовать",
+    promptRenameChapter: "Новое название главы?",
+    promptRenameScene: "Новое название сцены?",
+    confirmDeleteChapterCascade:
+      "Удалить эту главу? Все её сцены будут удалены вместе с ней.",
+    confirmDeleteScene: "Удалить эту сцену?",
+
     selectProject: "Выберите проект",
     selectBook: "Выберите книгу",
     newProjectTooltip: "Новый проект",
@@ -201,6 +208,13 @@ export const translations = {
     selectOrCreateBook: "Select or create a book to see its manuscript.",
     defaultChapterTitle: "New Chapter",
     defaultSceneTitle: "New Scene",
+
+    renameTooltip: "Rename",
+    promptRenameChapter: "New chapter title?",
+    promptRenameScene: "New scene title?",
+    confirmDeleteChapterCascade:
+      "Delete this chapter? All its scenes will be deleted too.",
+    confirmDeleteScene: "Delete this scene?",
 
     selectProject: "Select project",
     selectBook: "Select book",

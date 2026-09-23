@@ -88,6 +88,20 @@ export async function updateChapter(
   );
 }
 
+export async function renameChapter(id: string, title: string): Promise<void> {
+  const db = await getDb();
+  const now = new Date().toISOString();
+  await db.execute(
+    "UPDATE chapters SET title = $1, updated_at = $2 WHERE id = $3",
+    [title, now, id],
+  );
+}
+
+export async function deleteChapter(id: string): Promise<void> {
+  const db = await getDb();
+  await db.execute("DELETE FROM chapters WHERE id = $1", [id]);
+}
+
 export async function moveChapter(
   bookId: string,
   chapterId: string,

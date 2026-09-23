@@ -107,3 +107,17 @@ export async function updateSceneContent(
     [content, now, id],
   );
 }
+
+export async function renameScene(id: string, title: string): Promise<void> {
+  const db = await getDb();
+  const now = new Date().toISOString();
+  await db.execute(
+    "UPDATE scenes SET title = $1, updated_at = $2 WHERE id = $3",
+    [title, now, id],
+  );
+}
+
+export async function deleteScene(id: string): Promise<void> {
+  const db = await getDb();
+  await db.execute("DELETE FROM scenes WHERE id = $1", [id]);
+}
